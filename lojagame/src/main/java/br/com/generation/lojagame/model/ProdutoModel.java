@@ -32,6 +32,11 @@ public class ProdutoModel {
 	@JsonIgnoreProperties("produto")
 	@JoinColumn(name = "fk_id_categoria")
 	private CategoriaModel categoria;
+	
+	@ManyToOne
+	@JsonIgnoreProperties("produto")
+	@JoinColumn(name = "fk_id_usuario")
+	private UsuarioModel usuario;
 
 	public long getId_produto() {
 		return id_produto;
@@ -63,6 +68,14 @@ public class ProdutoModel {
 
 	public void setCategoria(CategoriaModel categoria) {
 		this.categoria = categoria;
+	}
+
+	public UsuarioModel getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(UsuarioModel usuario) {
+		this.usuario = usuario;
 	}
 
 }

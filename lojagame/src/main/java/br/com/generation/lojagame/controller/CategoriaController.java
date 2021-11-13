@@ -2,6 +2,8 @@ package br.com.generation.lojagame.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,7 @@ import br.com.generation.lojagame.model.CategoriaModel;
 import br.com.generation.lojagame.repository.CategoriaRepository;
 
 @RestController
-@RequestMapping("/categoria")
+@RequestMapping("/categorias")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class CategoriaController {
 
@@ -44,18 +46,24 @@ public class CategoriaController {
 	}
 
 	@PostMapping
-	public ResponseEntity<CategoriaModel> post(@RequestBody CategoriaModel categoria) {
+	public ResponseEntity<CategoriaModel> post(@Valid @RequestBody CategoriaModel categoria) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(categoriaRepository.save(categoria));
 	}
 
 	@PutMapping
-	public ResponseEntity<CategoriaModel> put(@RequestBody CategoriaModel categoria) {
-		return ResponseEntity.status(HttpStatus.OK).body(categoriaRepository.save(categoria));
+	public ResponseEntity<CategoriaModel> put(@Valid @RequestBody CategoriaModel categoria) {
+		return categoriaRepository.findById(categoria.getId_categoria())
+				.map(resp -> ResponseEntity.status(HttpStatus.OK).body(categoriaRepository.save(categoria)))
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@DeleteMapping("/{id}")
-	public void delete(@PathVariable long id) {
-		categoriaRepository.deleteById(id);
+	public ResponseEntity<?> delete(@PathVariable long id) {
+		return categoriaRepository.findById(id)
+				.map(resp -> {categoriaRepository.deleteById(id);
+					return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+				})
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 }
